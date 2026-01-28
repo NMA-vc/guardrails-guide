@@ -271,7 +271,7 @@
         <header>
             <div class="logo"><a href="https://nma.vc">NMA.vc</a></div>
             <h1><strong>GUARDRAILS.md</strong> is the safety protocol for autonomous agents.</h1>
-            <p class="subtitle">Persistent constraints that prevent catastrophic failures. A living document that captures lessons from mistakes and acts as the agent's conscience across context resets.</p>
+            <p class="subtitle">Persistent constraints that prevent catastrophic failures. A living document that captures lessons from mistakes and acts as the agent's conscience across context resets. Essential for <a href="https://code.anthropic.com/">Claude Code</a>, <a href="https://antigravity.google/">Antigravity</a>, and any agentic coding system.</p>
         </header>
 
         <div class="nav-grid">
@@ -307,7 +307,7 @@
             <p>Unlike compilers that fail deterministically on syntax errors, AI agents fail <em>stochastically</em>. The same prompt might succeed nine times and catastrophically fail on the tenth.</p>
 
             <h3>"The Gutter"</h3>
-            <p>In iterative loops (Ralph Loop, Antigravity swarms), agents feed their own outputs back into their context window. Over time, this accumulates debris: failed attempts, error logs, hallucinated reasoning.</p>
+            <p>In iterative loops (Ralph Loop, Antigravity swarms, Claude Code sessions), agents feed their own outputs back into their context window. Over time, this accumulates debris: failed attempts, error logs, hallucinated reasoning.</p>
 
             <p>Once the context fills with pollution, the agent prioritizes recent failures over original instructions. It enters a recursive loop, repeating the same mistakes. <strong>This state is "The Gutter."</strong></p>
 
@@ -470,6 +470,18 @@ Total Signs: 3
         <section id="implementation" class="section">
             <h2>Implementation guide</h2>
 
+            <h3>For <a href="https://code.anthropic.com/">Claude Code</a></h3>
+            <ol>
+                <li>Create <code>GUARDRAILS.md</code> in your project root</li>
+                <li>Claude Code automatically reads context files - the agent will see it</li>
+                <li>Optionally, reference it explicitly in your <code>.claude/instructions.md</code>:
+                    <pre><code>## Safety
+You MUST read and follow all constraints in GUARDRAILS.md.
+These are lessons learned from past failures.
+Never violate a SIGN without explicit human approval.</code></pre>
+                </li>
+            </ol>
+
             <h3>For <a href="https://antigravity.google/">Google Antigravity</a></h3>
             <ol>
                 <li>Create <code>GUARDRAILS.md</code> in project root</li>
@@ -599,6 +611,7 @@ If you violate a SIGN, stop and report.</code></pre>
         <section class="section">
             <h2>Resources</h2>
             <ul>
+                <li><a href="https://code.anthropic.com/">Claude Code</a> — Anthropic's agentic coding tool</li>
                 <li><a href="https://antigravity.md">Antigravity.md</a> — Google Antigravity IDE guide</li>
                 <li><a href="https://agents.md">AGENTS.md Spec</a> — Universal agent instructions</li>
                 <li><a href="https://github.com/agrimsingh/ralph-wiggum-cursor">Ralph Loop</a> — Implementation reference</li>
