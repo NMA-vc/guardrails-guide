@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardrails.md - Safety Protocol for Autonomous Agents</title>
+    <meta name="description" content="GUARDRAILS.md: Persistent safety constraints that prevent catastrophic failures in AI coding agents.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6PYQ5PC333"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-6PYQ5PC333');
+    </script>
+    
+    <style>
+        :root {
+            --green: #7ED957;
+            --green-dim: #6BC045;
+            --bg: #ffffff;
+            --text: #000000;
+            --text-light: #666666;
+            --border: #e5e5e5;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            margin-bottom: 4rem;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 3rem;
+            color: var(--text);
+        }
+
+        .logo a {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        h1 strong {
+            font-weight: 600;
+            color: var(--green);
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            font-weight: 300;
+            max-width: 650px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin: 5rem 0 2rem 0;
+            letter-spacing: -0.02em;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 3rem 0 1rem 0;
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            line-height: 1.8;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin: 3rem 0;
+        }
+
+        .nav-item {
+            background: var(--bg);
+            padding: 2rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #fafafa;
+        }
+
+        .nav-item-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .nav-item-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .concept-box {
+            background: #fafafa;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 3px solid var(--green);
+        }
+
+        .concept-box h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        code {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 2rem 0;
+            border-radius: 4px;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        a {
+            color: var(--green);
+            text-decoration: none;
+            border-bottom: 1px solid var(--green);
+            transition: opacity 0.2s;
+        }
+
+        a:hover {
+            opacity: 0.7;
+        }
+
+        .section {
+            margin-bottom: 5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+        }
+
+        footer {
+            margin-top: 6rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        footer a {
+            color: var(--text-light);
+            border-bottom-color: var(--text-light);
+        }
+
+        .tip {
+            background: #f0fff0;
+            border-left: 3px solid var(--green);
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .tip strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--green-dim);
+        }
+
+        .case-study {
+            background: #fafafa;
+            padding: 2rem;
+            margin: 2rem 0;
+            border-left: 3px solid var(--border);
+        }
+
+        .case-study h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1.5rem;
+            }
+            h1 {
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 1.75rem;
+            }
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo"><a href="https://nma.vc">NMA.vc</a></div>
+            <h1><strong>GUARDRAILS.md</strong> is the safety protocol for autonomous agents.</h1>
+            <p class="subtitle">Persistent constraints that prevent catastrophic failures. A living document that captures lessons from mistakes and acts as the agent's conscience across context resets.</p>
+        </header>
+
+        <div class="nav-grid">
+            <a href="#problem" class="nav-item">
+                <span class="nav-item-title">The Problem</span>
+                <span class="nav-item-desc">Context pollution and "The Gutter"</span>
+            </a>
+            <a href="#protocol" class="nav-item">
+                <span class="nav-item-title">The Protocol</span>
+                <span class="nav-item-desc">How GUARDRAILS.md works</span>
+            </a>
+            <a href="#signs" class="nav-item">
+                <span class="nav-item-title">Signs Architecture</span>
+                <span class="nav-item-desc">Structure of safety constraints</span>
+            </a>
+            <a href="#patterns" class="nav-item">
+                <span class="nav-item-title">Universal Patterns</span>
+                <span class="nav-item-desc">Proven safety mechanisms</span>
+            </a>
+            <a href="#implementation" class="nav-item">
+                <span class="nav-item-title">Implementation</span>
+                <span class="nav-item-desc">Platform-specific guides</span>
+            </a>
+            <a href="#case-studies" class="nav-item">
+                <span class="nav-item-title">Case Studies</span>
+                <span class="nav-item-desc">Real disasters prevented</span>
+            </a>
+        </div>
+
+        <section id="problem" class="section">
+            <h2>The problem: agents fail stochastically</h2>
+            
+            <p>Unlike compilers that fail deterministically on syntax errors, AI agents fail <em>stochastically</em>. The same prompt might succeed nine times and catastrophically fail on the tenth.</p>
+
+            <h3>"The Gutter"</h3>
+            <p>In iterative loops (Ralph Loop, Antigravity swarms), agents feed their own outputs back into their context window. Over time, this accumulates debris: failed attempts, error logs, hallucinated reasoning.</p>
+
+            <p>Once the context fills with pollution, the agent prioritizes recent failures over original instructions. It enters a recursive loop, repeating the same mistakes. <strong>This state is "The Gutter."</strong></p>
+
+            <div class="concept-box">
+                <h4>Example: The infinite library loop</h4>
+                <pre><code>Iteration 1: Uses crypto library → Error: not found
+Iteration 2: Tries to install crypto → Package doesn't exist
+Iteration 3: Tries crypto-js → Different API
+Iteration 4-20: Cycles between variants
+              Context now 90% error logs
+              Original objective forgotten</code></pre>
+            </div>
+
+            <p><strong>Core issue:</strong> Agents have no persistent memory. Each reset wipes lessons learned. Without externalized state, they repeat failures indefinitely.</p>
+        </section>
+
+        <section id="protocol" class="section">
+            <h2>The protocol: persistent state</h2>
+
+            <h3>Architecture principles</h3>
+            <ol>
+                <li><strong>Persistent storage:</strong> Lives in project repository</li>
+                <li><strong>Force-read on init:</strong> Agent must read at start of every iteration</li>
+                <li><strong>Append-only learning:</strong> New failures append new guardrails</li>
+                <li><strong>Human-readable:</strong> Developers can audit and edit</li>
+            </ol>
+
+            <h3>When it's created</h3>
+            <p>Generated dynamically when the agent detects failure patterns:</p>
+            <ul>
+                <li>Repeated identical errors (3+ times)</li>
+                <li>Circular tool call loops</li>
+                <li>Context pollution threshold exceeded</li>
+                <li>Manual "escape hatch" by developer</li>
+            </ul>
+
+            <div class="concept-box">
+                <h4>Example GUARDRAILS.md</h4>
+                <pre><code># GUARDRAILS.md
+# Persistent safety constraints
+
+## Meta
+Created: 2026-01-27
+Total Signs: 3
+
+---
+
+## SIGN #1
+**Trigger:** Using `crypto` library
+**Instruction:** Use `bcrypt` for password hashing
+**Reason:** crypto package doesn't exist
+**Provenance:** Iteration 4 failure
+
+---
+
+## SIGN #2
+**Trigger:** Modifying database schema
+**Instruction:** ALWAYS create migration file
+**Reason:** Direct changes caused data loss
+**Provenance:** Manual intervention, 2026-01-27
+
+---
+
+## SIGN #3
+**Trigger:** External API calls
+**Instruction:** Wrap ALL calls in try-catch with backoff
+**Reason:** Stripe timeout caused 2-hour outage
+**Provenance:** Iteration 12 failure</code></pre>
+            </div>
+        </section>
+
+        <section id="signs" class="section">
+            <h2>Signs architecture</h2>
+
+            <p>A "Sign" is a discrete unit of learned safety constraint. Each must contain:</p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Component</th>
+                        <th>Purpose</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Trigger</strong></td>
+                        <td>Context that precedes the error</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Instruction</strong></td>
+                        <td>Deterministic command to prevent it</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Reason</strong></td>
+                        <td>Why this guardrail exists</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Provenance</strong></td>
+                        <td>When/how it was added</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Good vs bad signs</h3>
+            
+            <div class="concept-box">
+                <h4>❌ Bad (too vague)</h4>
+                <p><strong>Instruction:</strong> "Be careful with auth"</p>
+                <p><em>Problem:</em> No actionable directive</p>
+            </div>
+
+            <div class="concept-box">
+                <h4>✓ Good (specific & actionable)</h4>
+                <p><strong>Trigger:</strong> Implementing authentication</p>
+                <p><strong>Instruction:</strong> Use bcrypt with 12 salt rounds. Never store plaintext passwords. Always require HTTPS.</p>
+                <p><strong>Reason:</strong> Plaintext passwords exposed in 2025 audit</p>
+                <p><strong>Provenance:</strong> Manual addition, 2026-01-15</p>
+            </div>
+        </section>
+
+        <section id="patterns" class="section">
+            <h2>Universal safety patterns</h2>
+
+            <h3>Pattern 1: Artifact verification</h3>
+            <p>Before destructive operations, create a plan for human review.</p>
+            <pre><code>**Trigger:** Deletes, drops, or prod modifications
+**Instruction:**
+1. Generate plan.md describing all changes
+2. Wait for human approval
+3. Log all actions to audit.log</code></pre>
+
+            <h3>Pattern 2: Context rotation</h3>
+            <p>Periodically reset to prevent pollution.</p>
+            <pre><code>**Trigger:** Context >80% capacity OR 10+ consecutive errors
+**Instruction:**
+1. Save state to context-snapshot.md
+2. Summarize key learnings
+3. Reset context window
+4. Re-inject: GUARDRAILS.md + summary + objective</code></pre>
+
+            <h3>Pattern 3: Privilege boundaries</h3>
+            <p>Define what agents CAN and CANNOT touch.</p>
+            <pre><code>**Allowed:**
+- Read: /src/**, /tests/**
+- Write: /src/** (with review)
+
+**Forbidden:**
+- /node_modules/**
+- /.git/**
+- Database migrations (require approval)</code></pre>
+
+            <h3>Pattern 4: Rate limiting</h3>
+            <p>Prevent runaway loops.</p>
+            <pre><code>**Limits:**
+- Max 10 tool calls per iteration
+- Max 50 tool calls per session
+- If reached: Force context rotation</code></pre>
+        </section>
+
+        <section id="implementation" class="section">
+            <h2>Implementation guide</h2>
+
+            <h3>For <a href="https://antigravity.google/">Google Antigravity</a></h3>
+            <ol>
+                <li>Create <code>GUARDRAILS.md</code> in project root</li>
+                <li>In <code>AGENTS.md</code> or <code>GEMINI.md</code>, add:
+                    <pre><code>## Critical Instructions
+You MUST read GUARDRAILS.md at start of every task.
+Treat all SIGNS as immutable constraints.
+If you violate a SIGN, stop and report.</code></pre>
+                </li>
+                <li>Configure agent approval for violations</li>
+            </ol>
+
+            <h3>For <a href="https://github.com/agrimsingh/ralph-wiggum-cursor">Ralph Loop</a></h3>
+            <p>Native support via <code>.ralph/GUARDRAILS.md</code>:</p>
+            <pre><code>{
+  "guardrails": {
+    "enabled": true,
+    "path": ".ralph/GUARDRAILS.md",
+    "auto_append": true,
+    "trigger_threshold": 3
+  }
+}</code></pre>
+
+            <h3>For custom agents</h3>
+            <pre><code>async function runAgentIteration() {
+  const guardrails = await fs.readFile('GUARDRAILS.md');
+  const context = {
+    systemPrompt: basePrompt,
+    guardrails: guardrails,
+    objective: objective
+  };
+  
+  const result = await agent.execute(context);
+  
+  if (result.violatesGuardrail) {
+    await requireHumanApproval(result);
+  }
+  
+  if (result.failurePattern.detected) {
+    await appendNewSign(result.failure);
+  }
+}</code></pre>
+
+            <div class="tip">
+                <strong>Pro tip</strong>
+                Start with 3-5 manually-written Signs based on your coding standards. Let agents append new ones as they encounter edge cases.
+            </div>
+        </section>
+
+        <section id="case-studies" class="section">
+            <h2>Case studies: disasters prevented</h2>
+
+            <div class="case-study">
+                <h4>The database migration disaster</h4>
+                <p><strong>What happened:</strong> Agent optimized queries by directly modifying production schema without migrations.</p>
+                <p><strong>Impact:</strong> 4-hour downtime, data inconsistencies</p>
+                <p><strong>Guardrail that prevented recurrence:</strong></p>
+                <pre><code>**Trigger:** Prisma schema modification
+**Instruction:**
+1. Create migration with `prisma migrate dev`
+2. Test in staging
+3. Require approval for production
+4. Never use `prisma db push` in prod</code></pre>
+            </div>
+
+            <div class="case-study">
+                <h4>The infinite API loop</h4>
+                <p><strong>What happened:</strong> Agent debugging <a href="https://stripe.com/">Stripe</a> entered loop of test calls, 2000+ requests in 30 minutes.</p>
+                <p><strong>Impact:</strong> $200 API costs, account suspended</p>
+                <p><strong>Guardrail:</strong></p>
+                <pre><code>**Trigger:** External API calls
+**Instruction:**
+- Max 10 calls per iteration
+- After 3 errors, stop and request human help
+- Always use test mode unless approved</code></pre>
+            </div>
+
+            <div class="case-study">
+                <h4>The credential leak</h4>
+                <p><strong>What happened:</strong> Agent improved logging but included API keys in plain text.</p>
+                <p><strong>Impact:</strong> Keys exposed in git, emergency rotation</p>
+                <p><strong>Guardrail:</strong></p>
+                <pre><code>**Trigger:** Adding logging statements
+**Instruction:**
+- Never log: API keys, passwords, tokens, sessions
+- Use redactSensitive() helper
+- Audit all logs before committing</code></pre>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2>Related protocols</h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>System</th>
+                        <th>Primary Use</th>
+                        <th>Mechanism</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>GUARDRAILS.md</strong></td>
+                        <td>Autonomous coding agents</td>
+                        <td>In-context learning via persistent file</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://github.com/NVIDIA/NeMo-Guardrails">NeMo Guardrails</a></td>
+                        <td>Enterprise chatbots</td>
+                        <td>Conversation flow control</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://www.guardrailsai.com/">Guardrails AI</a></td>
+                        <td>Structured output validation</td>
+                        <td>Pydantic schema enforcement</td>
+                    </tr>
+                    <tr>
+                        <td><a href="https://agents.md">AGENTS.md</a></td>
+                        <td>Agent behavior guidelines</td>
+                        <td>System prompt injection</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="section">
+            <h2>Resources</h2>
+            <ul>
+                <li><a href="https://antigravity.md">Antigravity.md</a> — Google Antigravity IDE guide</li>
+                <li><a href="https://agents.md">AGENTS.md Spec</a> — Universal agent instructions</li>
+                <li><a href="https://github.com/agrimsingh/ralph-wiggum-cursor">Ralph Loop</a> — Implementation reference</li>
+                <li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP LLM Top 10</a></li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Maintained by <a href="https://nma.vc">NMA.vc</a> — Open source the learnings</p>
+            <p style="margin-top: 1rem;">Protocol for the age of autonomous agents</p>
+        </footer>
+    </div>
+</body>
+</html>
