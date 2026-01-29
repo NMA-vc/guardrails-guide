@@ -18,6 +18,45 @@
       gtag('config', 'G-6PYQ5PC333');
     </script>
     
+    <!-- Schema.org structured data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": "GUARDRAILS.md - Safety Protocol for Autonomous AI Agents",
+      "description": "Persistent safety constraints that prevent catastrophic failures in AI coding agents. Essential for Claude Code, Google Antigravity, and any autonomous coding system.",
+      "author": {
+        "@type": "Organization",
+        "name": "NMA.vc",
+        "url": "https://nma.vc"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "NMA.vc",
+        "url": "https://nma.vc"
+      },
+      "datePublished": "2026-01-28",
+      "dateModified": "2026-01-28",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://guardrails.md"
+      },
+      "about": [
+        {
+          "@type": "Thing",
+          "name": "AI Agent Safety",
+          "description": "Safety protocols for autonomous AI coding agents"
+        },
+        {
+          "@type": "Thing",
+          "name": "GUARDRAILS.md Protocol",
+          "description": "File-based safety constraints for agentic development"
+        }
+      ],
+      "keywords": "GUARDRAILS.md, AI agent safety, autonomous coding, Claude Code, agentic development, safety constraints, context pollution"
+    }
+    </script>
+    
     <style>
         :root {
             --green: #7ED957;
@@ -617,6 +656,40 @@ If you violate a SIGN, stop and report.</code></pre>
                 <li><a href="https://github.com/agrimsingh/ralph-wiggum-cursor">Ralph Loop</a> — Implementation reference</li>
                 <li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP LLM Top 10</a></li>
             </ul>
+        </section>
+
+        <section class="section">
+            <h2>Frequently Asked Questions</h2>
+            
+            <h3>What is GUARDRAILS.md?</h3>
+            <p>GUARDRAILS.md is a file-based safety protocol for autonomous AI coding agents. It's a persistent document that captures lessons from failures and acts as the agent's memory across context resets, preventing the same mistakes from recurring.</p>
+
+            <h3>Why do AI agents need guardrails?</h3>
+            <p>Unlike traditional software that fails deterministically, AI agents fail stochastically — the same task might succeed nine times and fail catastrophically on the tenth. Without persistent memory, agents repeat mistakes across sessions. GUARDRAILS.md provides that memory.</p>
+
+            <h3>What is "The Gutter"?</h3>
+            <p>"The Gutter" is a failure mode where an agent's context window fills with error logs and failed attempts. The agent prioritizes recent failures over original instructions, entering a recursive loop of repeated mistakes. GUARDRAILS.md prevents this.</p>
+
+            <h3>How do I use GUARDRAILS.md with Claude Code?</h3>
+            <p>Create a GUARDRAILS.md file in your project root. Claude Code automatically reads context files. Optionally, reference it in your .claude/instructions.md to ensure the agent treats it as mandatory reading.</p>
+
+            <h3>What is a "Sign" in GUARDRAILS.md?</h3>
+            <p>A Sign is a discrete unit of learned safety constraint. Each Sign has four components: Trigger (what context precedes the error), Instruction (how to prevent it), Reason (why this matters), and Provenance (when/how it was added).</p>
+
+            <h3>Should I write Signs manually or let the agent create them?</h3>
+            <p>Start with 3-5 manually-written Signs based on your team's coding standards and known failure patterns. Then let the agent append new Signs as it encounters edge cases. This creates a living document that evolves with your project.</p>
+
+            <h3>How is GUARDRAILS.md different from AGENTS.md?</h3>
+            <p>AGENTS.md defines general behavior and preferences. GUARDRAILS.md captures specific failure patterns and safety constraints learned from actual mistakes. Think of AGENTS.md as "how to behave" and GUARDRAILS.md as "what not to do."</p>
+
+            <h3>Can GUARDRAILS.md work with any AI coding tool?</h3>
+            <p>Yes. While it originated in the Ralph Loop methodology, the concept works with Claude Code, Google Antigravity, Cursor, or any agentic system where you can inject persistent context. The implementation details vary by platform.</p>
+
+            <h3>What are the most critical safety patterns?</h3>
+            <p>The four universal patterns are: (1) Artifact Verification — human approval before destructive operations, (2) Context Rotation — periodic resets to prevent pollution, (3) Privilege Boundaries — explicit access controls, and (4) Rate Limiting — preventing runaway loops.</p>
+
+            <h3>How do I know if my guardrails are working?</h3>
+            <p>Monitor three metrics: (1) Repeated error rate (should decrease over time), (2) Context rotation frequency (should stabilize), and (3) Human intervention rate (should decrease for known patterns but remain high for novel situations).</p>
         </section>
 
         <footer>
