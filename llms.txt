@@ -1,0 +1,135 @@
+# GUARDRAILS.md Protocol
+
+> The safety protocol for autonomous AI coding agents. Persistent constraints that prevent catastrophic failures.
+
+## Overview
+
+GUARDRAILS.md is a file-based protocol for creating persistent safety constraints in agentic development loops. It solves the fundamental problem of agents having no memory across sessions by externalizing learned constraints into a file that must be read at initialization.
+
+Essential for Claude Code, Google Antigravity, Ralph Loop, and any autonomous coding system.
+
+## The Problem: Stochastic Failures
+
+Unlike traditional software that fails deterministically, AI agents fail stochastically - the same task might succeed nine times and fail catastrophically on the tenth. Without persistent memory, agents repeat the same mistakes across sessions.
+
+### "The Gutter"
+When an agent's context window fills with error logs and failed attempts, it prioritizes recent failures over original instructions, entering a recursive loop of repeated mistakes. This is called "The Gutter."
+
+Example: Agent tries to use `crypto` library → Error → Tries to install → Doesn't exist → Tries `crypto-js` → Different API → Cycles between variants → Context now 90% error logs → Original objective forgotten.
+
+## The Solution: Persistent State
+
+GUARDRAILS.md provides:
+- **Persistent State**: Lessons learned survive context resets
+- **"Signs" Architecture**: Discrete units of learned safety constraints
+- **Context Pollution Prevention**: Escape mechanism for "Gutter" states
+- **Audit Trail**: Human-readable record of failures and fixes
+
+## Signs Architecture
+
+A "Sign" is a discrete unit of learned safety constraint with four components:
+
+1. **Trigger**: Context that precedes the error (e.g., "Modifying database schema")
+2. **Instruction**: Deterministic command to prevent it (e.g., "ALWAYS create migration file")
+3. **Reason**: Why this guardrail exists (e.g., "Direct changes caused data loss")
+4. **Provenance**: When/how it was added (e.g., "Manual intervention, 2026-01-27")
+
+### Good Sign Example
+```
+**Trigger:** Implementing authentication endpoints
+**Instruction:** Use bcrypt with 12 salt rounds. Never store plaintext passwords. Always require HTTPS.
+**Reason:** Plaintext passwords exposed in 2025 audit
+**Provenance:** Manual addition, 2026-01-15
+```
+
+## Universal Safety Patterns
+
+### 1. Artifact Verification
+Before destructive operations, create a plan for human review. Wait for explicit approval before proceeding.
+
+### 2. Context Rotation
+When context exceeds 80% capacity or 10+ consecutive errors:
+1. Save state to context-snapshot.md
+2. Summarize key learnings
+3. Reset context window
+4. Re-inject: GUARDRAILS.md + summary + objective
+
+### 3. Privilege Boundaries
+Explicitly define what agents CAN and CANNOT touch:
+- Allowed: Read /src/**, Write /src/** (with review)
+- Forbidden: /node_modules/**, /.git/**, Database migrations (require approval)
+
+### 4. Rate Limiting
+Prevent runaway loops:
+- Max 10 tool calls per iteration
+- Max 50 tool calls per session
+- If reached: Force context rotation
+
+## Implementation
+
+### For Claude Code
+1. Create `GUARDRAILS.md` in project root
+2. Claude Code automatically reads it
+3. Optionally reference in `.claude/instructions.md`:
+   ```
+   You MUST read and follow all constraints in GUARDRAILS.md.
+   Never violate a SIGN without explicit human approval.
+   ```
+
+### For Google Antigravity
+1. Create `GUARDRAILS.md` in project root
+2. Reference in `AGENTS.md` or `GEMINI.md`
+3. Configure agent approval for violations
+
+### For Ralph Loop
+Native support via `.ralph/GUARDRAILS.md`:
+```json
+{
+  "guardrails": {
+    "enabled": true,
+    "path": ".ralph/GUARDRAILS.md",
+    "auto_append": true,
+    "trigger_threshold": 3
+  }
+}
+```
+
+## Real-World Case Studies
+
+### The Database Migration Disaster
+**What happened:** Agent optimized queries by directly modifying production schema without migrations.
+**Impact:** 4-hour downtime, data inconsistencies
+**Guardrail:** Always create migration with `prisma migrate dev`, test in staging, require approval for production
+
+### The Infinite API Loop
+**What happened:** Agent debugging Stripe entered loop of test calls, 2000+ requests in 30 minutes.
+**Impact:** $200 API costs, account suspended
+**Guardrail:** Max 10 API calls per iteration, stop after 3 consecutive errors, always use test mode
+
+### The Credential Leak
+**What happened:** Agent improved logging but included API keys in plain text.
+**Impact:** Keys exposed in git, emergency rotation
+**Guardrail:** Never log API keys, passwords, tokens, sessions; use redactSensitive() helper
+
+## Getting Started
+
+Start with 3-5 manually-written Signs based on your team's coding standards and known failure patterns. Let the agent append new Signs as it encounters edge cases. This creates a living document that evolves with your project.
+
+## Success Metrics
+
+Monitor three metrics:
+1. **Repeated error rate** - Should decrease over time
+2. **Context rotation frequency** - Should stabilize
+3. **Human intervention rate** - Should decrease for known patterns but remain high for novel situations
+
+## Related Resources
+
+- Antigravity guide: https://antigravity.md
+- Claude Code: https://code.anthropic.com/
+- AGENTS.md spec: https://agents.md
+- Ralph Loop implementation: https://github.com/agrimsingh/ralph-wiggum-cursor
+- OWASP LLM Top 10: https://owasp.org/www-project-top-10-for-large-language-model-applications/
+
+---
+
+Maintained by NMA.vc | https://nma.vc
